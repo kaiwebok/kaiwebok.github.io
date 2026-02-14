@@ -3,262 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy Birthday Jupster</title>
-    <style>
-        @import url('fonts/css2?family=Forum&family=Lilita+One&display=swap');
-        /* General reset */
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-            background-image: url('img/FHWHD6n/IMG-3027.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-color: pink;
-            font-family: "Lilita One", sans-serif;
+    <title>KAI the AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "marked": "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js",
+          "dompurify": "https://cdn.jsdelivr.net/npm/dompurify/dist/purify.es.min.js"
         }
-
-        h1 {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            margin: 20px 0;
-            color: white;
-            font-family: "Lilita One", sans-serif;
-        }
-
-        #playButton {
-            display: block;
-            margin: 0 auto;
-            padding: 10px 20px;
-            font-size: 18px;
-            font-family: Arial, sans-serif;
-            background-color: #CB3F60;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: #FF56B3;
-            font-family: "Lilita One", sans-serif;
-        }
-
-        #playButton:hover {
-            opacity: 0.8;
-        }
-
-        #bowBalance {
-            position: absolute;
-            top: 10px;
-            right: 80px;
-            display: flex;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 10px;
-            border-radius: 25px;
-            font-family: Arial, sans-serif;
-            font-family: "Lilita One", sans-serif;
-        }
-
-        #bowBalance img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-
-        .bow {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background-image: url('img/sCQ7pgm/Untitled169-20241207210105.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            cursor: pointer;
-            transition: transform 2s linear;
-        }
-    </style>
+      }
+    </script>
 </head>
 <body>
-    <audio src="audio/sh7n2/Brawl%20Stars%20OST%20%20SpongeBob%20%20Battle%20Music.mp3" loop autoplay>
-        Your browser does not support the audio element.
-    </audio>
-    <!-- Bow Balance Display -->
-    <div id="bowBalance">
-        <img src="img/sCQ7pgm/Untitled169-20241207210105.png" alt="Bow Icon">
-        <span id="bowAmount">0</span>
+    <div id="app">
+        <header>
+            <div class="header-left">
+                <img src="https://i.ibb.co/Kpm3Z25g/Untitled555-20250817144624.png" alt="Kai" class="header-pfp">
+                <div class="status-indicator">
+                    <span id="connection-dot" class="online"></span>
+                    <span id="system-status">ONLINE</span>
+                </div>
+            </div>
+            <div class="title">KAI</div>
+        </header>
+
+        <main id="chat-container">
+            <div class="message system">
+                kai is ready to chat
+            </div>
+        </main>
+
+        <div id="typing-indicator" class="hidden">
+            <span></span><span></span><span></span>
+        </div>
+
+        <footer>
+            <div class="input-area">
+                <textarea id="user-input" placeholder="Type a message..." rows="1"></textarea>
+                <button id="send-btn" aria-label="Send">➤</button>
+            </div>
+        </footer>
     </div>
 
-    <!-- Lobby Content -->
-    <h1 style="color: #FFCDCD;">Happy Birthday Jupster</h1>
-    <button id="playButton">Play</button>
-
-    <script src="conf/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <!-- configuration -->
     <script>
-        const bowBalance = document.getElementById('bowAmount');
-        let bowCount = 0;
-        let popupActive = false; // Flag to track if the popup is active
-        let bowInterval = null; // Variable to store the bow spawning interval
-
-        const playButton = document.getElementById('playButton');
-        const body = document.body;
-
-        // Function to format the bow count
-        function formatNumber(number) {
-            if (number >= 1e9) {
-                return (number / 1e9).toFixed(2) + 'B'; // Billions
-            } else if (number >= 1e6) {
-                return (number / 1e6).toFixed(2) + 'M'; // Millions
-            } else if (number >= 1e3) {
-                return (number / 1e3).toFixed(2) + 'K'; // Thousands
-            } else {
-                return number.toString(); // Below 1k
-            }
-        }
-
-        // Start game
-        playButton.addEventListener('click', () => {
-            playButton.style.display = 'none'; // Hide play button
-            startGame();
-        });
-
-        function startGame() {
-            bowInterval = setInterval(() => {
-                if (popupActive) return; // If popup is active, do not spawn bows
-
-                // Create a bow element
-                const bow = document.createElement('div');
-                bow.className = 'bow';
-
-                // Determine if it's a Rainbow Bow (30% chance)
-                const isRainbow = Math.random() < 0.1;
-                if (isRainbow) {
-                    bow.style.backgroundImage = "url('img/GPLn3fP/Untitled169-20241207231042.png')"; // Rainbow Bow image
-                    bow.dataset.type = 'rainbow'; // Optional: track the bow type
-                }
-
-                // Random position within the viewport
-                const randomX = Math.random() * (window.innerWidth - 50);
-                const randomY = Math.random() * (window.innerHeight - 50);
-                bow.style.left = `${randomX}px`;
-                bow.style.top = `${randomY}px`;
-
-                // Random movement direction
-                let directionX = Math.random() > 0.5 ? 1 : -1;
-                let directionY = Math.random() > 0.5 ? 1 : -1;
-
-                // Update position periodically to simulate movement
-                const moveInterval = setInterval(() => {
-                    let currentX = parseFloat(bow.style.left);
-                    let currentY = parseFloat(bow.style.top);
-
-                    // Change direction if it hits a boundary
-                    if (currentX <= 0 || currentX >= window.innerWidth - 50) directionX *= -1;
-                    if (currentY <= 0 || currentY >= window.innerHeight - 50) directionY *= -1;
-
-                    // Update position
-                    bow.style.left = `${currentX + directionX * 1.5}px`;
-                    bow.style.top = `${currentY + directionY * 1.5}px`;
-                }, 30);
-
-                // Append to the body
-                body.appendChild(bow);
-
-                // Remove bow after 4 seconds if not clicked
-                setTimeout(() => {
-                    if (bow.parentNode) {
-                        bow.parentNode.removeChild(bow);
-                        clearInterval(moveInterval);
-                    }
-                }, 3000);
-
-                // On click, remove bow and increment balance
-                bow.addEventListener('click', () => {
-                    if (bow.parentNode) {
-                        bow.parentNode.removeChild(bow);
-                        clearInterval(moveInterval);
-                    }
-
-                    // If popup is active, do not add points
-                    if (popupActive) {
-                        return; // Stop execution if popup is active
-                    }
-
-                    // Check if the bow is a Rainbow Bow
-                    if (bow.dataset.type === 'rainbow') {
-                        // Add 50 points for Rainbow Bow
-                        bowCount += 50;
-                        showRainbowPopup(); // Show the popup
-                    } else {
-                        // Regular bow gives 1 point
-                        bowCount++;
-                    }
-
-                    // Update the bow balance with formatted number
-                    bowBalance.textContent = formatNumber(bowCount);
-                });
-            }, 1000); // Spawn bows every 1 second
-        }
-
-        // Function to show a custom popup
-        function showRainbowPopup() {
-            // Set popupActive to true to block further actions
-            popupActive = true;
-
-            // Stop the bow spawning interval when the popup is active
-            clearInterval(bowInterval);
-
-            // Create a popup container
-            const popup = document.createElement('div');
-            popup.style.position = 'fixed';
-            popup.style.top = '50%';
-            popup.style.left = '50%';
-            popup.style.transform = 'translate(-50%, -50%)';
-            popup.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-            popup.style.border = '2px solid #FF56B3';
-            popup.style.borderRadius = '10px';
-            popup.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
-            popup.style.padding = '20px';
-            popup.style.textAlign = 'center';
-            popup.style.zIndex = '1000';
-
-            // Popup content
-            popup.innerHTML = `
-                <h2 style="margin: 0; color: #FF56B3; font-family: Arial, sans-serif;">You got a Rainbow Bow!</h2>
-                <p style="color: #333; margin-top: 10px;">You earned 50 bow points!</p>
-                <button id="closePopup" style="
-                    margin-top: 15px;
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    font-family: Arial, sans-serif;
-                    background-color: #CB3F60;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                ">Close</button>
-            `;
-
-            // Add popup to the body
-            body.appendChild(popup);
-
-            // Trigger confetti effect when popup appears using canvas-confetti
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { x: 0.5, y: 0.5 }
-            });
-
-            // Close popup on button click
-            const closeButton = document.getElementById('closePopup');
-            closeButton.addEventListener('click', () => {
-                if (popup.parentNode) {
-                    popup.parentNode.removeChild(popup);
-                }
-                popupActive = false; // Set popupActive to false to allow further actions
-                startGame(); // Resume bow spawning when the popup is closed
-            });
-        }
+        window._SYSTEM_CONFIG = {
+            "api_key": "AIzaSyB3-fake-key-77281-x992812",
+            "token_v2": "AIzaSyD-decoy-002-z8123k"
+        };
+        window.keys = Array.from({length: 20}, () => "AIzaSy" + Math.random().toString(36).substring(2, 35));
     </script>
+
+    <script type="module" src="core.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
